@@ -27,7 +27,7 @@ func main() {
 
 	hc := httpclient.New()
 
-	osClient := clients.NewOSClient(cfg.OSBaseURL, hc)
+	osClient := clients.NewOSClient(cfg.OSBaseURL, cfg.OSAuthToken, hc)
 	billingClient := clients.NewBillingClient(cfg.BillingBaseURL, hc)
 	execClient := clients.NewExecutionClient(cfg.ExecutionBaseURL, hc)
 	entityClient := clients.NewEntityAPIClient(cfg.EntityBaseURL, hc)

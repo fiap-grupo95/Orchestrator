@@ -44,7 +44,12 @@ func (u *CancelOSUseCase) CancelServiceOrder(ctx context.Context, ServiceOrderId
 		return err
 	}
 
-	err = u.billing.CancelBudget(ctx, ServiceOrder.ID)
+	budgetID := ServiceOrder.ID
+	if ServiceOrder.PaymentID != nil && *ServiceOrder.PaymentID != "" {
+		budgetID = *ServiceOrder.PaymentID
+	}
+
+	err = u.billing.CancelBudget(ctx, budgetID)
 	if err != nil {
 		logger.Error().Err(err).Msg("Error canceling budget")
 		return err

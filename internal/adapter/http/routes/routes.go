@@ -11,5 +11,6 @@ func Register(mux *http.ServeMux, h *handlers.OrchestrationHandler) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	mux.HandleFunc("POST /orchestrations/service-orders", h.StartServiceOrderFlow)
+	mux.HandleFunc("POST /orchestrator/v1/service-orders", h.StartServiceOrderFlow)
+	mux.HandleFunc("POST /orchestrator/v1/service-orders/{id}/cancel", h.CancelServiceOrderFlow)
 }

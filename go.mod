@@ -8,6 +8,7 @@ require (
 	github.com/newrelic/go-agent/v3/integrations/nrgin v1.4.2
 	github.com/rs/zerolog v1.34.0
 	github.com/stretchr/testify v1.11.1
+	github.com/golang-jwt/jwt/v5 v5.3.0
 )
 
 require (

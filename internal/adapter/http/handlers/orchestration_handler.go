@@ -49,12 +49,7 @@ func (h *OrchestrationHandler) CancelServiceOrderFlow(w http.ResponseWriter, r *
 	ctx, cancel := context.WithTimeout(r.Context(), 10*time.Second)
 	defer cancel()
 
-	var in request.StartInput
-	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
-		http.Error(w, "invalid json", http.StatusBadRequest)
-		return
-	}
-	osID := r.URL.Query().Get("id")
+	osID := r.PathValue("id")
 	if osID == "" {
 		http.Error(w, "Failed to parse service order ID", http.StatusBadRequest)
 		return
