@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"github.com/daniloAleite/orchestrator/internal/infrastructure/observability"
 	"net/http"
 	"time"
 
@@ -15,17 +17,25 @@ import (
 
 func main() {
 	cfg := config.Load()
-	log := logger.New()
+	newRelicApp, err := observability.NewRelicApp()
+	if err != nil {
+		logs.Logger().Error().Err(err).Msg("Failed to initialize New Relic; continuing without New Relic integration")
+	}
+
+	// Initialize logger with New Relic integration - Global Variable
+	logs.Init(newRelicApp)
 
 	hc := httpclient.New()
 
-	osClient := clients.NewOSClient(cfg.OSBaseURL, hc)
+	osClient := clients.NewOSClient(cfg.OSBaseURL, cfg.OSAuthToken, hc)
 	billingClient := clients.NewBillingClient(cfg.BillingBaseURL, hc)
 	execClient := clients.NewExecutionClient(cfg.ExecutionBaseURL, hc)
+	entityClient := clients.NewEntityAPIClient(cfg.EntityBaseURL, hc)
 
-	uc := usecase.NewOrchestrateServiceOrder(log, osClient, billingClient, execClient)
+	uc := usecase.NewOrchestrateServiceOrder(osClient, billingClient, execClient)
+	ucCancel := usecase.NewCancelOSUseCase(osClient, entityClient, execClient, billingClient)
 
-	h := handlers.NewOrchestrationHandler(uc)
+	h := handlers.NewOrchestrationHandler(uc, ucCancel)
 
 	mux := http.NewServeMux()
 	routes.Register(mux, h)
@@ -37,6 +47,6 @@ func main() {
 		WriteTimeout: 15 * time.Second,
 	}
 
-	log.Info("orchestrator running", "port", cfg.Port)
+	logs.Info(fmt.Sprintf("orchestrator running on port %s", cfg.Port))
 	_ = srv.ListenAndServe()
 }
