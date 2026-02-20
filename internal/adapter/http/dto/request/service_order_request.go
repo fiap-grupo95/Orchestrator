@@ -1,8 +1,8 @@
 package request
 
 import (
-	"github.com/fiap-grupo95/os-service-api/internal/domain/entities"
-	"github.com/fiap-grupo95/os-service-api/internal/domain/valueobject"
+	"github.com/daniloAleite/orchestrator/internal/domain/entities"
+	"github.com/daniloAleite/orchestrator/internal/domain/valueobject"
 )
 
 type ServiceOrderCreateRequest struct {

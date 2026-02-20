@@ -1,9 +1,8 @@
 package entities
 
 import (
+	"github.com/daniloAleite/orchestrator/internal/domain/valueobject"
 	"time"
-
-	"github.com/fiap-grupo95/os-service-api/internal/domain/valueobject"
 )
 
 type User struct {

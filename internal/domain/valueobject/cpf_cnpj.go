@@ -1,8 +1,8 @@
 package valueobject
 
 import (
-	cpfutils "github.com/fiap-grupo95/os-service-api/internal/domain/valueobject/cpf_cnpj_utils/utils"
-	"github.com/fiap-grupo95/os-service-api/internal/domain/valueobject/cpf_cnpj_utils/validators"
+	"github.com/daniloAleite/orchestrator/internal/domain/valueobject/cpf_cnpj_utils/utils"
+	"github.com/daniloAleite/orchestrator/internal/domain/valueobject/cpf_cnpj_utils/validators"
 	"regexp"
 )
 
@@ -42,9 +42,9 @@ func (c CpfCnpj) IsValid() error {
 
 func (c CpfCnpj) Mask() string {
 	if len(c) == 11 {
-		return cpfutils.MaskCPF(c.String())
+		return utils.MaskCPF(c.String())
 	}
-	return cpfutils.MaskCNPJ(c.String())
+	return utils.MaskCNPJ(c.String())
 }
 
 func (c CpfCnpj) String() string {
