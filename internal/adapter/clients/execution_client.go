@@ -35,3 +35,20 @@ func (c *ExecutionClient) StartExecution(ctx context.Context, osID string) error
 	}
 	return nil
 }
+
+func (c *ExecutionClient) CancelExecution(ctx context.Context, osID string) error {
+	path := fmt.Sprintf("/v1/executions/cancel/%s", osID)
+	req, _ := http.NewRequestWithContext(ctx, http.MethodPost, c.base+path, nil)
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := c.hc.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		return fmt.Errorf("execution-service status=%d", resp.StatusCode)
+	}
+	return nil
+}

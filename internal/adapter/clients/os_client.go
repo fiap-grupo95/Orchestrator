@@ -5,10 +5,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/daniloAleite/orchestrator/internal/adapter/http/dto/request"
+	"github.com/daniloAleite/orchestrator/internal/adapter/http/dto/response"
 	"net/http"
 	"strings"
-
-	"github.com/daniloAleite/orchestrator/internal/usecase"
 )
 
 type OSClient struct {
@@ -20,7 +20,30 @@ func NewOSClient(base string, hc *http.Client) *OSClient {
 	return &OSClient{base: strings.TrimRight(base, "/"), hc: hc}
 }
 
-func (c *OSClient) CreateOS(ctx context.Context, in usecase.StartInput) (string, error) {
+func (c *OSClient) GetOS(ctx context.Context, id string) (*response.ServiceOrderResponse, error) {
+	path := fmt.Sprintf("/v1/service/%s", id)
+	req, _ := http.NewRequestWithContext(ctx, http.MethodGet, c.base+path, nil)
+	req.Header.Set("Content-Type", "application/json")
+	var osResponse *response.ServiceOrderResponse
+
+	resp, err := c.hc.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		return nil, fmt.Errorf("os-service status=%d", resp.StatusCode)
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(osResponse); err != nil {
+		return nil, err
+	}
+
+	return osResponse, nil
+}
+
+func (c *OSClient) CreateOS(ctx context.Context, in request.StartInput) (string, error) {
 	body, _ := json.Marshal(in)
 
 	req, _ := http.NewRequestWithContext(ctx, http.MethodPost, c.base+"/service-orders", bytes.NewReader(body))
